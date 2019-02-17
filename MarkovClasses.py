@@ -25,7 +25,7 @@ class Patient:
             if dt is None or dt + t > sim_length:
                 if_stop = True
             else:
-                #increment time
+                # increment time
                 t += dt
                 # update health state
                 self.stateMonitor.update(time=t, new_state=HealthState(new_state_index))
@@ -40,16 +40,16 @@ class PatientStateMonitor:
 
     def update(self, time, new_state):
 
-        if new_state == HealthState.DEAD or HealthState.NATURAL_DEATH:
+        if new_state == HealthState.STROKE_DEAD or HealthState.NATURAL_DEATH:
             self.survivalTime = time
 
-        if self.currentState == HealthState.STROKE or self.currentState == HealthState.DEAD:
+        if self.currentState == HealthState.STROKE or self.currentState == HealthState.STROKE_DEAD:
             self.nStrokes += 1
 
         self.currentState = new_state
 
     def get_if_alive(self):
-        if self.currentState != HealthState.DEAD or self.currentState != HealthState.NATURAL_DEATH:
+        if self.currentState != HealthState.STROKE_DEAD or self.currentState != HealthState.NATURAL_DEATH:
             return True
         else:
             return False
