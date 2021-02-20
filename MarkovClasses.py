@@ -1,7 +1,7 @@
-import SimPy.RandomVariantGenerators as RVGs
-import SimPy.SamplePathClasses as PathCls
+import SimPy.RandomVariateGenerators as RVGs
+import SimPy.SamplePath as Path
 from InputData import HealthState
-import SimPy.MarkovClasses as Markov
+import SimPy.Markov as Markov
 
 
 class Patient:
@@ -97,7 +97,7 @@ class CohortOutcomes:
         self.meanSurvivalTime = sum(self.survivalTimes) / len(self.survivalTimes)
         self.meanNumOfStrokes = sum(self.nTotalStrokes) / len(self.nTotalStrokes)
 
-        self.nLivingPatients = PathCls.PrevalencePathBatchUpdate(
+        self.nLivingPatients = Path.PrevalencePathBatchUpdate(
             name='# of living patients',
             initial_size= len(simulated_patients),
             times_of_changes=self.survivalTimes,
