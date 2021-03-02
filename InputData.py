@@ -17,7 +17,7 @@ ANTICOAG_STROKE_REDUCTION = 0.45
 ANTICOAG_BLEEDING_DEATH_INCREASE = 0.05
 
 
-class HealthState(Enum):
+class HealthStates(Enum):
     """ health states of patients """
     WELL = 0
     STROKE = 1
