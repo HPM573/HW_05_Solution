@@ -100,21 +100,19 @@ class Cohort:
         :param sim_length: simulation length
         """
 
-        # populate the cohort
-        patients = []
+        # populate and simulate the cohort
         for i in range(self.popSize):
             # create a new patient (use id * pop_size + n as patient id)
-            patient = Patient(id=self.id*self.popSize + i,
+            patient = Patient(id=self.id * self.popSize + i,
                               trans_rate_matrix=self.transRateMatrix)
-            # add the patient to the cohort
-            patients.append(patient)
+            # simulate
+            patient.simulate(sim_length)
 
-        # simulate all patients
-        for patient in patients:
-            patient.simulate(sim_length=sim_length)
+            # store outputs of this simulation
+            self.cohortOutcomes.extract_outcome(simulated_patient=patient)
 
-        # store outputs of this simulation
-        self.cohortOutcomes.extract_outcomes(patients)
+        # calculate cohort outcomes
+        self.cohortOutcomes.calculate_cohort_outcomes(initial_pop_size=self.popSize)
 
 
 class CohortOutcomes:
@@ -126,23 +124,30 @@ class CohortOutcomes:
         self.meanSurvivalTime = None
         self.meanNumOfStrokes = None
 
-    def extract_outcomes(self, simulated_patients):
-        """ extracts outcomes of a simulated cohort
-        :param simulated_patients: a list of simulated patients"""
+    def extract_outcome(self, simulated_patient):
+        """ extracts outcomes of a simulated patient
+        :param simulated_patient: a simulated patient"""
 
-        for patient in simulated_patients:
-            # survival time
-            if not (patient.stateMonitor.survivalTime is None):
-                self.survivalTimes.append(patient.stateMonitor.survivalTime)
-            # number of strokes
-            self.nTotalStrokes.append(patient.stateMonitor.nStrokes)
+        # survival time
+        if not (simulated_patient.stateMonitor.survivalTime is None):
+            self.survivalTimes.append(simulated_patient.stateMonitor.survivalTime)
+        # number of strokes
+        self.nTotalStrokes.append(simulated_patient.stateMonitor.nStrokes)
 
+    def calculate_cohort_outcomes(self, initial_pop_size):
+        """ calculates the cohort outcomes
+        :param initial_pop_size: initial population size
+        """
+
+        # calculate mean survival time
         self.meanSurvivalTime = sum(self.survivalTimes) / len(self.survivalTimes)
-        self.meanNumOfStrokes = sum(self.nTotalStrokes) / len(self.nTotalStrokes)
+        # calculate mean number of stokes
+        self.meanNumOfStrokes = sum(self.nTotalStrokes)/len(self.nTotalStrokes)
 
+        # survival curve
         self.nLivingPatients = Path.PrevalencePathBatchUpdate(
             name='# of living patients',
-            initial_size=len(simulated_patients),
+            initial_size=initial_pop_size,
             times_of_changes=self.survivalTimes,
             increments=[-1]*len(self.survivalTimes)
         )
