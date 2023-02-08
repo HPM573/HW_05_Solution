@@ -1,20 +1,21 @@
-import MarkovClasses as Cls
-import SimPy.Plots.SamplePaths as Path
-import SimPy.Plots.Histogram as Hist
+import deampy.plots.histogram as hist
+import deampy.plots.sample_paths as path
+
 import InputData as D
+from MarkovClasses import Cohort
 
 # -----------------------------
 # Model with no anticoagulation
 # -----------------------------
-myCohortNoAntiCoag = Cls.Cohort(id=1,
-                                pop_size=D.POP_SIZE,
-                                trans_rate_matrix=D.get_trans_rate_matrix(with_treatment=False))
+myCohortNoAntiCoag = Cohort(id=1,
+                            pop_size=D.POP_SIZE,
+                            trans_rate_matrix=D.get_trans_rate_matrix(with_treatment=False))
 
 # simulate
 myCohortNoAntiCoag.simulate(sim_length=D.SIMULATION_LENGTH)
 
 # survival curve
-Path.plot_sample_path(
+path.plot_sample_path(
     sample_path=myCohortNoAntiCoag.cohortOutcomes.nLivingPatients,
     title='Survival Curve (Model without anticoagulation)',
     x_label='Time Step (Year)',
@@ -22,7 +23,7 @@ Path.plot_sample_path(
 )
 
 # histograms of survival times
-Hist.plot_histogram(
+hist.plot_histogram(
     data=myCohortNoAntiCoag.cohortOutcomes.survivalTimes,
     title='Histogram of Patient Survival Time\n(Model without anticoagulation)',
     x_label='Survival Time (Year)',
@@ -31,7 +32,7 @@ Hist.plot_histogram(
 )
 
 # histogram of number of strokes
-Hist.plot_histogram(
+hist.plot_histogram(
     data=myCohortNoAntiCoag.cohortOutcomes.nTotalStrokes,
     title='Number of Strokes (Without anticoagulation)',
     x_label='Number of Strokes',
@@ -51,15 +52,15 @@ print('     Mean number of strokes:',
 # -----------------------------
 # Markov model with anticoagulation
 # -----------------------------
-myCohortWithAntiCoag = Cls.Cohort(id=1,
-                                  pop_size=D.POP_SIZE,
-                                  trans_rate_matrix=D.get_trans_rate_matrix(with_treatment=True))
+myCohortWithAntiCoag = Cohort(id=1,
+                              pop_size=D.POP_SIZE,
+                              trans_rate_matrix=D.get_trans_rate_matrix(with_treatment=True))
 
 # simulate
 myCohortWithAntiCoag.simulate(sim_length=D.SIMULATION_LENGTH)
 
 # survival curve
-Path.plot_sample_path(
+path.plot_sample_path(
     sample_path=myCohortWithAntiCoag.cohortOutcomes.nLivingPatients,
     title='Survival Curve (Model with anticoagulation)',
     x_label='Time Step (Year)',
@@ -67,7 +68,7 @@ Path.plot_sample_path(
 )
 
 # histograms of survival times
-Hist.plot_histogram(
+hist.plot_histogram(
     data=myCohortWithAntiCoag.cohortOutcomes.survivalTimes,
     title='Histogram of Patient Survival Time\n(Model with anticoagulation)',
     x_label='Survival Time (Year)',
@@ -76,7 +77,7 @@ Hist.plot_histogram(
 )
 
 # histogram of number of strokes
-Hist.plot_histogram(
+hist.plot_histogram(
     data=myCohortWithAntiCoag.cohortOutcomes.nTotalStrokes,
     title='Number of Strokes (With anticoagulation)',
     x_label='Number of Strokes',
