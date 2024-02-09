@@ -6,7 +6,7 @@ import numpy as np
 POP_SIZE = 2000         # cohort population size
 SIMULATION_LENGTH = 50    # length of simulation (years)
 
-ANNUAL_PROB_ALL_CAUSE_MORT = 1/18.4
+LIFE_EXPECTANCY = 18.4
 ANNUAL_PROB_STROKE_MORT = 36.2 / 100000
 ANNUAL_PROB_FIRST_STROKE = 15 / 1000
 PROB_SURVIVE_FIRST_STROKE = 0.75
@@ -34,25 +34,29 @@ def get_trans_rate_matrix(with_treatment):
     :return: transition rate matrix
     """
 
-    # Part 1: find the annual probability of non-stroke death
-    annual_prob_non_stroke_mort = (ANNUAL_PROB_ALL_CAUSE_MORT - ANNUAL_PROB_STROKE_MORT)
-    lambda0 = -np.log(1-annual_prob_non_stroke_mort)
+    # Part 1: find the annual rate of death due to all causes for a person of age 65.
+    annual_rate_all_cause_mort = 1/LIFE_EXPECTANCY
 
-    # Part 2: lambda 1 + lambda 2
+    # Part 2: find the annual probability of non-stroke death
+    annual_rate_stroke_mort = -np.log(1-ANNUAL_PROB_STROKE_MORT)
+    # annual rate of background mortality
+    lambda0 = annual_rate_all_cause_mort - annual_rate_stroke_mort
+
+    # Part 3: lambda 1 + lambda 2
     lambda1_plus2 = -np.log(1 - ANNUAL_PROB_FIRST_STROKE)
 
-    # Part 3
+    # Part 4
     lambda1 = lambda1_plus2*PROB_SURVIVE_FIRST_STROKE
     lambda2 = lambda1_plus2*(1-PROB_SURVIVE_FIRST_STROKE)
 
-    # Part 4
+    # Part 5
     lambda3_plus4 = -1/5 * np.log(1-FIVE_YEAR_PROB_RECURRENT_STROKE)
 
-    # Part 5
+    # Part 6
     lambda3 = lambda3_plus4*PROB_SURVIVE_RECURRENT_STROKE
     lambda4 = lambda3_plus4*(1-PROB_SURVIVE_RECURRENT_STROKE)
 
-    # Part 6
+    # Part 7
     lambda5 = 1/STROKE_DURATION
 
     # find multipliers to adjust the rates out of "Post-Stroke" depending on whether the patient
