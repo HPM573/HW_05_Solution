@@ -6,7 +6,7 @@ import numpy as np
 POP_SIZE = 2000         # cohort population size
 SIMULATION_LENGTH = 50    # length of simulation (years)
 
-LIFE_EXPECTANCY = 18.4
+ANNUAL_PROB_ALL_CAUSE_MORT = 4466.9 / 100000
 ANNUAL_PROB_STROKE_MORT = 36.2 / 100000
 ANNUAL_PROB_FIRST_STROKE = 15 / 1000
 PROB_SURVIVE_FIRST_STROKE = 0.75
@@ -34,10 +34,10 @@ def get_trans_rate_matrix(with_treatment):
     :return: transition rate matrix
     """
 
-    # Part 1: find the annual rate of death due to all causes for a person of age 65.
-    annual_rate_all_cause_mort = 1/LIFE_EXPECTANCY
+    # Part 1: find the annual rate of all-cause mortality
+    annual_rate_all_cause_mort = -np.log(1-ANNUAL_PROB_ALL_CAUSE_MORT)
 
-    # Part 2: find the annual probability of non-stroke death
+    # Part 2: find the annual rate of non-stroke death
     annual_rate_stroke_mort = -np.log(1-ANNUAL_PROB_STROKE_MORT)
     # annual rate of background mortality
     lambda0 = annual_rate_all_cause_mort - annual_rate_stroke_mort
